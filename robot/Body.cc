@@ -1,0 +1,157 @@
+#include "Body.hpp"
+
+Body::Body()
+{
+    N_Task = 1;   // 0: Hold, 1: trot
+    x0.resize(12);
+    x0.setZero();
+    x_ref.resize(12);
+    x_ref.setZero();
+    
+}
+
+Body::~Body()
+{
+}
+
+Matrix3d Body:: get_R()
+{
+    
+    // R(k+1) = R(k) exp(omega^ dt) // dt = 0.001
+     
+        // omega_IMU_hat = F->skew(omega_IMU);
+        // u = omega_IMU.normalized();
+        // u_hat = F->skew(u);
+
+
+        // theta = omega_IMU.norm() * dt;
+        // exp_omega_dt = Matrix3d::Identity() + u_hat *  sin(theta) + u_hat.pow(2) * (1 - cos(theta));
+
+        // R = R * exp_omega_dt;       
+
+        // YPR = R.eulerAngles(2,1,0);
+    //     // R = R * 
+    //     cout << "Roderiguess\n " << R << endl;
+
+    RPY << x0[0], x0[1], x0[2];
+    //     Matrix3d RR;
+    // // Rotation matrix (Yaw-Pitch-Roll)
+        R << cos(RPY[2]) * cos(RPY[1]), 
+            cos(RPY[2]) * sin(RPY[1]) * sin(RPY[0]) - sin(RPY[2]) * cos(RPY[0]), 
+            cos(RPY[2]) * sin(RPY[1]) * cos(RPY[0]) + sin(RPY[2]) * sin(RPY[0]),
+
+            sin(RPY[2]) * cos(RPY[1]), 
+            sin(RPY[2]) * sin(RPY[1]) * sin(RPY[0]) + cos(RPY[2]) * cos(RPY[0]), 
+            sin(RPY[2]) * sin(RPY[1]) * cos(RPY[0]) - cos(RPY[2]) * sin(RPY[0]),
+
+            -sin(RPY[1]), 
+            cos(RPY[1]) * sin(RPY[0]), 
+            cos(RPY[1]) * cos(RPY[0]);
+
+    
+    return R;
+}
+
+VectorXd Body:: get_x_ref(double t)
+{
+    x_ref << 0,     // roll
+            0,      // pitch    
+            0,      // yaw
+            0.2 * t,      // x
+            0,      // y
+            0.3536, // z
+            0,      // roll dot
+            0,      // pitch dot
+            0,      // yaw dot
+            0.2,      // x dot
+            0,      // y dot
+            0;      // z dot
+
+    // // Front jump
+    // if(t < 1)
+    // {
+    //     x_ref[5] = 0.3536 - 0.2536*t;
+    //     x_ref[11] = -0.2536;
+    // }
+    // else if(t < 1.5)
+    // {
+    //     x_ref[5] = 0.1;
+    //     x_ref[11] = 0;        
+    // }
+    // else
+    // {
+    //     x_ref[3] = 1*t;
+    //     x_ref[9] = 1;
+
+    //     x_ref[5] = 0.1 + 2*t;
+    //     x_ref[11] = 2;    
+            
+    // }
+    
+    // run
+    // if(t < 1)
+    // {
+    //     x_ref[3] = 0.1*t;
+    //     x_ref[9] = 0.1;
+    // }
+    // else if(t < 2)
+    // {
+    //     x_ref[3] = 0.2*t + 0.1;
+    //     x_ref[9] = 0.2;        
+    // }
+    // else
+    // {
+    //     x_ref[3] = 0.25*t + 0.3;
+    //     x_ref[9] = 0.25;   
+    // }
+
+    return x_ref;
+}
+VectorXd Body::get_z_ref(double t)
+{    
+    for(int k = 0; k < horizon; k++ )
+        z_ref.segment(k*2*nx, nx) = get_x_ref(t + k*MPC_dt);
+
+    return z_ref;
+} 
+
+void Body::init_x_ref_mpc(int n, double sampling_time) {
+        horizon = n;
+        MPC_dt = sampling_time;
+        z_ref.resize(x_ref.size() * horizon * 2);
+        z_ref.setZero();
+}
+
+
+void Body::sensor_measure(const mjModel* m, mjData* d)
+{
+    Vector3d th;
+    Vector4d quat;
+
+    quat << d->qpos[3], d->qpos[4], d->qpos[5], d->qpos[6];
+    th = F->quat2rpy(quat);
+    
+    omega_IMU << d->sensordata[3], d->sensordata[4], d->sensordata[5]; 
+
+    // World Frame
+    x0 << th[0], th[1], th[0],               // th
+        d->qpos[0], d->qpos[1], d->qpos[2], // p
+        omega_IMU[0], omega_IMU[1], omega_IMU[2], // thdot
+        d->qvel[0], d->qvel[1], d->qvel[2]; // pdot
+
+
+    
+    // Vector3d trunk_linvel;
+    // Vector3d trunk_pos;
+
+    // trunk_linvel << d->sensordata[6], d->sensordata[7], d->sensordata[8];
+    // trunk_pos << d->sensordata[9], d->sensordata[10], d->sensordata[11];
+
+    // x0 << YPR[2], YPR[1], YPR[0],               // th
+    //         trunk_pos[0], trunk_pos[1], trunk_pos[2], // p
+    //         omega_IMU[0], omega_IMU[1], omega_IMU[2], // thdot
+    //         trunk_linvel[0], trunk_linvel[1], trunk_linvel[2]; // pdot
+
+
+}
+
