@@ -8,6 +8,10 @@ Body::Body()
     x_ref.resize(12);
     x_ref.setZero();
     
+    M = 17;
+    I(0,0) = 0.289178;
+    I(1,1) = 0.539984;
+    I(2,2) = 0.829139;
 }
 
 Body::~Body()
@@ -56,13 +60,13 @@ VectorXd Body:: get_x_ref(double t)
 {
     x_ref << 0,     // roll
             0,      // pitch    
-            0,      // yaw
+            0.,      // yaw
             0.2 * t,      // x
             0,      // y
             0.3536, // z
             0,      // roll dot
             0,      // pitch dot
-            0,      // yaw dot
+            0.,      // yaw dot
             0.2,      // x dot
             0,      // y dot
             0;      // z dot
@@ -128,6 +132,8 @@ void Body::sensor_measure(const mjModel* m, mjData* d)
     Vector3d th;
     Vector4d quat;
 
+    foot_vector(m, d);
+    
     quat << d->qpos[3], d->qpos[4], d->qpos[5], d->qpos[6];
     th = F->quat2rpy(quat);
     
@@ -139,19 +145,12 @@ void Body::sensor_measure(const mjModel* m, mjData* d)
         omega_IMU[0], omega_IMU[1], omega_IMU[2], // thdot
         d->qvel[0], d->qvel[1], d->qvel[2]; // pdot
 
-
-    
-    // Vector3d trunk_linvel;
-    // Vector3d trunk_pos;
-
-    // trunk_linvel << d->sensordata[6], d->sensordata[7], d->sensordata[8];
-    // trunk_pos << d->sensordata[9], d->sensordata[10], d->sensordata[11];
-
-    // x0 << YPR[2], YPR[1], YPR[0],               // th
-    //         trunk_pos[0], trunk_pos[1], trunk_pos[2], // p
-    //         omega_IMU[0], omega_IMU[1], omega_IMU[2], // thdot
-    //         trunk_linvel[0], trunk_linvel[1], trunk_linvel[2]; // pdot
-
-
 }
 
+void Body::foot_vector(const mjModel* m, mjData* d) {
+
+    CoM_pos_W << d->subtree_com[0], d->subtree_com[1], d->subtree_com[2];
+    for(int i = 0; i < 4; i++)
+        r_W[i] << d->site_xpos[3*i+3] - CoM_pos_W[0], d->site_xpos[3*i+4] - CoM_pos_W[1], d->site_xpos[3*i+5] - CoM_pos_W[2];
+
+}

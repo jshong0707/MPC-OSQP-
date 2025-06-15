@@ -3,10 +3,6 @@
 
 #include "globals.hpp"
 
-#include <eigen-master/Eigen/Core>
-#include <eigen-master/Eigen/Dense>
-
-using namespace Eigen;
 
 class filter
 {

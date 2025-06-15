@@ -1,9 +1,14 @@
-#ifndef INTEGRATE_H_
-#define INTEGRATE_H_
+#pragma once
 
 #include "globals.hpp"
+#include "Actuator.hpp"
+#include "F_Kinematics.hpp"
+#include "B_Kinematics.hpp"
+#include "Controller.hpp"
+#include "Body.hpp"
+#include "MPC.hpp"
 #include "FSM.hpp"
-#include "QP.hpp"
+
 class Controller;
 class F_Kinematics;
 class B_Kinematics;
@@ -90,5 +95,3 @@ public:
     // Vector3d get_leg_pos(int Leg_num) {return leg_pos[Leg_num];}
     // Vector3d get_leg_vel(int Leg_num) {return leg_vel[Leg_num];}
 };
-
-#endif

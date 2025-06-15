@@ -34,9 +34,10 @@
 
 #include <dataLogging.hpp>
 #include "globals.hpp"
-#include "QP.hpp"
 #include "Integrate.hpp"
-#include "BezierCurve.hpp"
+#include "F_Kinematics.hpp"
+#include "B_Kinematics.hpp"
+#include "Controller.hpp"
 
 #define MUJOCO_PLUGIN_DIR "mujoco_plugin"
 
@@ -113,7 +114,6 @@ Integrate I(K_FL, K_FR, K_RL, K_RR, Traj, B, M, C, FSM_);
 
 dataLogging Logging;
 
-BezierCurve Bezier;
 
 int world_cnt = 0;
 int loop_index = 0;

@@ -32,7 +32,7 @@ MPC::MPC(F_Kinematics &K_FL, F_Kinematics &K_FR, F_Kinematics &K_RL, F_Kinematic
     R_u.resize(nu,nu);    R_u = R_u.setIdentity() * 0.01;    
     Q_f.resize(nx,nx);    Q_f = Q_f.setIdentity() * 3000;   
     // Q_x(1,1) = 100; 
-    Q_x(2,2) = 300;
+    Q_x(2,2) = 1500;
     Q_x(3,3) = 100;   R_u(3,3) = 0.01;// x
     Q_x(4,4) = 1000;   R_u(4,4) = 0.01;// y
     Q_x(5,5) = 1000;   // z
@@ -41,7 +41,7 @@ MPC::MPC(F_Kinematics &K_FL, F_Kinematics &K_FR, F_Kinematics &K_RL, F_Kinematic
     
     //    constraint
         Fz_lb = 0;
-        Fz_max = 100;
+        Fz_max = 200;
     // // Weigting
     // double other = 100;
     // auto Q_diag = Q_x.diagonal();  // 대각원소에 대한 참조(VectorXd&)
@@ -62,10 +62,8 @@ MPC::MPC(F_Kinematics &K_FL, F_Kinematics &K_FR, F_Kinematics &K_RL, F_Kinematic
     I_12.resize(12,12);
     I_12.setIdentity();
 
-    I(0,0) = 0.289178;
-    I(1,1) = 0.539984;
-    I(2,2) = 0.829139;
-    
+    I = B_.get_Body_I();
+    M = B_.get_Body_M();
     I_inv = I.inverse();
 
     OSQP_init();
@@ -227,7 +225,7 @@ void MPC::A_Friction_Contact_Constraint()
         0,0,0,   0,0,0,   0,0,0,   0,  0,   1;
 
         util->add_block(A_constraint, m * horizon);
-        util->u_fill_horizon_block(A_constraint, Fric_constraint);
+        util->u_fill_horizon_block(A_constraint, Fric_constraint, 1);
 
 }
 
@@ -255,8 +253,8 @@ void MPC::b_Friction_Contact_default()
     util->add_rows(lb_constraint, nC_fricandFSM);         
     util->add_rows(ub_constraint, nC_fricandFSM);                 
     
-    util->fill_horizon_vector(lb_constraint, lb_fric);
-    util->fill_horizon_vector(ub_constraint, ub_fric);
+    util->fill_horizon_vector(lb_constraint, lb_fric, 1);
+    util->fill_horizon_vector(ub_constraint, ub_fric, 1);
 }
 
 void MPC::A_default(){
@@ -324,7 +322,7 @@ void MPC::b_update()
 
     /* Friction & Contact Constraint */
         b_Friction_Contact_Constraint();    
-        util->fill_horizon_vector(ub_constraint, ub_fric);
+        util->fill_horizon_vector(ub_constraint, ub_fric, 1);
         
         lb_arr.assign(lb_constraint.data(),
                     lb_constraint.data() + n_con);
@@ -488,17 +486,11 @@ void MPC::Dynamics() {
 
 
 void MPC::foot_vector(const mjModel* m, mjData* d) {
-    CoM_pos_W << d->subtree_com[0], d->subtree_com[1], d->subtree_com[2];
-    for(int i = 0; i < 4; i++)
-        r_W[i] << d->site_xpos[3*i+3] - CoM_pos_W[0], d->site_xpos[3*i+4] - CoM_pos_W[1], d->site_xpos[3*i+5] - CoM_pos_W[2];
-
-    // Ctrl_point_W << d->site_xpos[0], d->site_xpos[1], d->site_xpos[2];
-    // for(int i = 0; i < 4; i++)
-    //     r_W[i] << d->site_xpos[3*i+3] - Ctrl_point_W[0], d->site_xpos[3*i+4] - Ctrl_point_W[1], d->site_xpos[3*i+5] - Ctrl_point_W[2];
+    for(int leg = 0; leg < 4; leg++)
+        r_W[leg] = B_.get_r_W(leg);
 
     t = d->time;
 
-    
 }
 
 MPC::~MPC()

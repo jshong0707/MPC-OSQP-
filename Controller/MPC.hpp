@@ -1,8 +1,6 @@
-#ifndef MPC_H_
-#define MPC_H_
+#pragma once
 
 #include "globals.hpp"
-#include "casadi/casadi.hpp"
 #include "qpOASES.hpp"
 
 #include "stdlib.h"
@@ -13,7 +11,6 @@
 #include "filter.hpp"
 #include "FSM.hpp"
 
-using namespace casadi;
 using namespace std;
 
 class Body;
@@ -34,12 +31,12 @@ private:
     MPC_util *util;
     filter *F;
     
-    // VectorXd state;
-    VectorXd x0;
-    VectorXd u0;
-    
-    VectorXd x_ref; // Consider horizon
-    VectorXd z_ref; 
+    /* VectorXd state */
+        VectorXd x0;
+        VectorXd u0;
+        
+        VectorXd x_ref; // Consider horizon
+        VectorXd z_ref; 
 
     /* Special Matrix */ 
         Matrix3d I_3 = Matrix3d::Identity();
@@ -64,7 +61,7 @@ private:
         Matrix3d R;
         Matrix3d I;
         Matrix3d I_inv;
-        double M = 17;
+        double M;
         double t;
 
         MatrixXd Ad;
@@ -93,6 +90,7 @@ private:
         // Contact Schedule
         MatrixXd Contact_schedule;
         vector<bool> is_contact = {true, true, true, true};
+
     /* Friction */
         double mu = 0.7;    
         double Fz_lb;
@@ -164,6 +162,3 @@ public:
 
      
 };
-
-
-#endif

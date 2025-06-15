@@ -2,15 +2,9 @@
 #define DATALOGGING_H_
 
 #include <cstdio>             // for FILE*
-#include <mujoco/mujoco.h>    // for mjModel, mjData
-// #include <Eigen/Dense>        // for VectorXd, Vector3d
-
-// using Eigen::VectorXd;
-// using Eigen::Vector3d;
 
 #include "globals.hpp"
 #include "Integrate.hpp"
-#include "QP.hpp"
 
 class dataLogging {
 private:

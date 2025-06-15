@@ -1,10 +1,12 @@
-#ifndef CONTROLLER_H_
-#define CONTROLLER_H_
+#pragma once
 
 #include "globals.hpp"
 #include "filter.hpp"
 #include "eigen-master/Eigen/Core"
 #include "eigen-master/Eigen/Dense"
+#include "FSM.hpp"
+#include "Body.hpp"
+#include "MPC.hpp"
 
 using namespace Eigen;
 using namespace std;
@@ -82,6 +84,3 @@ public:
     
 };
 
-
-
-#endif

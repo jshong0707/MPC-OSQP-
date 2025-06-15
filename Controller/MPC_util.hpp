@@ -1,6 +1,5 @@
 
-#ifndef MPC_UTIL_H_
-#define MPC_UTIL_H_
+#pragma once
 
 #include "globals.hpp"
 
@@ -8,8 +7,8 @@ class MPC_util
 {
 private:
     int nx, nu, horizon;
-    int M_rows_old;
-    int V_rows_old;
+    vector<int> M_rows_old;
+    vector<int> V_rows_old;
 public:
     MPC_util(int Nx, int Nu, int Horizon);
     ~MPC_util();
@@ -35,24 +34,22 @@ public:
     * @param M: Matrix that have to be filled
     * @param m: Constraint Matrix for one horizon
     */
-    void u_fill_horizon_block(MatrixXd& M, MatrixXd& m);  
+    void u_fill_horizon_block(MatrixXd& M, MatrixXd& m, int Constraint_num);  
     
     /** 
     * @brief Fill m into M for state constraint. 
     * @param M: Matrix that have to be filled
     * @param m: Constraint Matrix for one horizon
     */
-    void x_fill_horizon_block(MatrixXd& M, MatrixXd& m);  // Fill m into M.
+    void x_fill_horizon_block(MatrixXd& M, MatrixXd& m, int Constraint_num);  // Fill m into M.
 
     /** 
     * @brief Fill V into v for state constraint. 
     * @param V: Vector that have to be filled
     * @param v: Constraint vecctr for one horizon
     */
-    void fill_horizon_vector(VectorXd& V, VectorXd& v);
+    void fill_horizon_vector(VectorXd& V, VectorXd& v, int Constraint_num);
 
     // Matrix3d skew(const Vector3d& v);
 };
 
-
-#endif

@@ -1,10 +1,7 @@
-#ifndef F_KINEMATICS_H_
-#define F_KINEMATICS_H_
+#pragma once
 
 #include "globals.hpp"
-#include "eigen-master/Eigen/Core"
-#include "eigen-master/Eigen/Dense"
-#include <mujoco/mujoco.h>
+#include "Actuator.hpp"
 
 using namespace Eigen;
 
@@ -50,5 +47,3 @@ public:
  
 };
 
-
-#endif

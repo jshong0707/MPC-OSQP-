@@ -1,10 +1,5 @@
 #pragma once
 
-#include <vector>
-#include <iostream>
-#include <eigen-master/Eigen/Dense>
-#include <eigen-master/Eigen/Core>
-
 #include "globals.hpp"
 
 using namespace std;

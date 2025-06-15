@@ -75,28 +75,12 @@ void Integrate::Leg_controller()
     }
 
     /* Joint Input */
-        // F_Joint_input[0] = K_FL.get_Jacb().transpose() * FB_input[0];
-        // F_Joint_input[1] = K_FR.get_Jacb().transpose() * FB_input[1];
-        // B_Joint_input[0] = K_RL.get_Jacb().transpose() * FB_input[2];
-        // B_Joint_input[1] = K_RR.get_Jacb().transpose() * FB_input[3];
-
-        // F_Joint_input[0] = K_FL.get_Jacb().transpose() * opt_GRF[0];
-        // F_Joint_input[1] = K_FR.get_Jacb().transpose() * opt_GRF[1];
-        // B_Joint_input[0] = K_RL.get_Jacb().transpose() * opt_GRF[2];
-        // B_Joint_input[1] = K_RR.get_Jacb().transpose() * opt_GRF[3];
 
         F_Joint_input[0] = K_FL.get_Jacb().transpose() * (opt_GRF[0] + FB_input[0]);
         F_Joint_input[1] = K_FR.get_Jacb().transpose() * (opt_GRF[1] + FB_input[1]);
         B_Joint_input[0] = K_RL.get_Jacb().transpose() * (opt_GRF[2] + FB_input[2]);
         B_Joint_input[1] = K_RR.get_Jacb().transpose() * (opt_GRF[3] + FB_input[3]);
 
-
-        // cout << "///////////////////////////////////////////////////////////\n" << endl;
-        // cout << is_contact << endl;
-        // cout << opt_GRF[0][0] << "   " << opt_GRF[1][0] << "   " << opt_GRF[2][0] << "   " << opt_GRF[3][0] << endl; 
-        // cout << FB_input[0][0] << " " << FB_input[1][0] << " " << FB_input[2][0] << " " << FB_input[3][0] << endl;
-        // cout << FB_input[0][1] << " " << FB_input[1][1] << " " << FB_input[2][1] << " " << FB_input[3][1] << endl;
-        // cout << FB_input[0][2] << " " << FB_input[1][2] << " " << FB_input[2][2] << " " << FB_input[3][2] << endl;
 
 }
 
@@ -112,7 +96,6 @@ void Integrate::Cal_Kinematics()
 
 void Integrate::get_error(double t)
 {
-    // leg_pos_ref = Traj.custom_leg_traj(t);
     leg_pos_ref = Traj.Traj(t);
     
     // cout << leg_pos_ref << endl;

@@ -4,7 +4,7 @@ Trajectory::Trajectory(F_Kinematics &K_FL, F_Kinematics &K_FR, F_Kinematics &K_R
 :K_FL(K_FL), K_FR(K_FR), K_RL(K_RL), K_RR(K_RR), B_(B_)
 {
     pos_ref = VectorXd::Zero(12);
-    T = 0.25;
+    T = 0.3;
     T_total = 2 * T;
     
     gait_phase_delay = {0.0, 0.5, 0.5, 0.0}; // trot

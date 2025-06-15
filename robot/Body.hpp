@@ -1,5 +1,4 @@
-#ifndef BODY_H_
-#define BODY_H_
+#pragma once
 
 #include "globals.hpp"
 
@@ -8,6 +7,9 @@ class filter;
 class Body
 {
 private:
+    Matrix3d I;
+    double M;
+
     int N_Task;
     filter *F;
     VectorXd x0;
@@ -23,6 +25,8 @@ private:
     Vector3d u = Vector3d::Zero();
     Matrix3d u_hat = Matrix3d::Zero();
     double theta;
+    Vector3d CoM_pos_W = Vector3d::Zero();
+    Vector3d r_W[4];
 
     Matrix3d exp_omega_dt;
     int horizon;
@@ -37,6 +41,7 @@ public:
     ~Body();
 
     void sensor_measure(const mjModel* m, mjData* d);
+    void foot_vector(const mjModel* m, mjData* d);
     VectorXd get_z_ref(double t);
     VectorXd get_x_ref(double t);
 
@@ -44,10 +49,9 @@ public:
     VectorXd get_x0(){return x0;}
     Matrix3d get_R();
     int get_Task(){return N_Task;}
+    Matrix3d get_Body_I(){return I;}
+    double get_Body_M(){return M;}
+    Vector3d get_r_W(int leg){return r_W[leg];}
 
 };
 
-
-
-
-#endif

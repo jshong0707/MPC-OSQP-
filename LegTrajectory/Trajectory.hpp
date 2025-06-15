@@ -1,6 +1,9 @@
 #pragma once
 
 #include "globals.hpp"
+#include "F_Kinematics.hpp"
+#include "B_Kinematics.hpp"
+#include "Body.hpp"
 #include "BezierCurve.hpp"
 
 class BezierCurve;

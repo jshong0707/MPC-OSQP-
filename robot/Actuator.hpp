@@ -3,7 +3,6 @@
 
 #include "globals.hpp"
 
-using namespace Eigen;
 
 class filter;
 
