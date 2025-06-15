@@ -140,7 +140,7 @@ void Body::sensor_measure(const mjModel* m, mjData* d)
     omega_IMU << d->sensordata[3], d->sensordata[4], d->sensordata[5]; 
 
     // World Frame
-    x0 << th[0], th[1], th[0],               // th
+    x0 << th[0], th[1], th[2],               // th
         d->qpos[0], d->qpos[1], d->qpos[2], // p
         omega_IMU[0], omega_IMU[1], omega_IMU[2], // thdot
         d->qvel[0], d->qvel[1], d->qvel[2]; // pdot
